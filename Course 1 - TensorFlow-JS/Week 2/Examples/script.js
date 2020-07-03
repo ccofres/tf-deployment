@@ -15,13 +15,19 @@ function getModel() {
 	model.add(tf.layers.dense({units: 128, activation: 'relu'}));
 	model.add(tf.layers.dense({units: 10, activation: 'softmax'}));
 
-	model.compile({optimizer: tf.train.adam(), loss: 'categoricalCrossentropy', metrics: ['accuracy']});
+	model.compile(
+    {
+    optimizer: tf.train.adam(), 
+    loss: 'categoricalCrossentropy', 
+    metrics: ['accuracy']
+    }
+  );
 
 	return model;
 }
 
 async function train(model, data) {
-	const metrics = ['loss', 'val_loss', 'accuracy', 'val_accuracy'];
+	const metrics = ['loss', 'val_loss', 'acc', 'val_acc'];
 	const container = { name: 'Model Training', styles: { height: '640px' } };
 	const fitCallbacks = tfvis.show.fitCallbacks(container, metrics);
   
@@ -43,8 +49,8 @@ async function train(model, data) {
 			d.xs.reshape([TEST_DATA_SIZE, 28, 28, 1]),
 			d.labels
 		];
-	});
-
+  });
+  
 	return model.fit(trainXs, trainYs, {
 		batchSize: BATCH_SIZE,
 		validationData: [testXs, testYs],
@@ -81,8 +87,8 @@ function save() {
 	var raw = tf.browser.fromPixels(rawImage,1);
 	var resized = tf.image.resizeBilinear(raw, [28,28]);
 	var tensor = resized.expandDims(0);
-    var prediction = model.predict(tensor);
-    var pIndex = tf.argMax(prediction, 1).dataSync();
+  var prediction = model.predict(tensor);
+  var pIndex = tf.argMax(prediction, 1).dataSync();
     
 	alert(pIndex);
 }
@@ -102,7 +108,6 @@ function init() {
 	clearButton.addEventListener("click", erase);
 }
 
-
 async function run() {  
 	const data = new MnistData();
 	await data.load();
@@ -114,7 +119,3 @@ async function run() {
 }
 
 document.addEventListener('DOMContentLoaded', run);
-
-
-
-    
