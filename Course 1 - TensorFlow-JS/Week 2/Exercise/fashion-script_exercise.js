@@ -14,28 +14,41 @@ function getModel() {
   // many layers, filters, and neurons as you like.  
   // HINT: Take a look at the MNIST example.
   model = tf.sequential();
+
   model.add(tf.layers.conv2d({
     inputShape: [28,28,1],
     kernelSize:3,
-    filters: 16,
-    strides: 1,
-    activation: 'relu',
-    kernelInitializer: 'varianceScaling'
+    filters: 8,
+    activation: 'relu'
   }));
+
+  //model.add(tf.layers.maxPooling2d({poolSize: [2, 2]}));
+  model.add(tf.layers.conv2d({
+    kernelSize:3,
+    filters: 8,
+    activation: 'relu'
+  }));
+
+
+  model.add(tf.layers.conv2d({
+    kernelSize:3,
+    filters: 16,
+    activation: 'relu'
+  }));
+  //model.add(tf.layers.maxPooling2d({poolSize: [2, 2]}));
+  
+  
   model.add(tf.layers.conv2d({
     kernelSize:3,
     filters: 32,
-    strides: 1,
-    activation: 'relu',
-    kernelInitializer: 'varianceScaling'
+    activation: 'relu'
   }));
-  model.add(tf.layers.maxPooling2d({poolSize: [2, 2], strides: [2, 2]}));
-  model.add(tf.layers.dropout({rate: 0.25}));
+  model.add(tf.layers.maxPooling2d({poolSize: [2, 2]}));
+
+
   model.add(tf.layers.flatten());
-  model.add(tf.layers.dense({units: 128, activation: 'relu'}));
-  //model.add(tf.layers.dense({units: 64, activation: 'relu'}));
-  //model.add(tf.layers.dense({units: 32, activation: 'relu'}));
-  //model.add(tf.layers.dropout({rate: 0.5}));
+  model.add(tf.layers.dense({units: 512, activation: 'relu'}));
+  model.add(tf.layers.dense({units: 256, activation: 'relu'}));
   model.add(tf.layers.dense({units: 10, activation: 'softmax'}));
     
   // Compile the model using the categoricalCrossentropy loss,
@@ -65,9 +78,9 @@ async function train(model, data) {
   // Use the container and metrics defined above as the parameters.
   const fitCallbacks = tfvis.show.fitCallbacks(container, metrics);
     
-  const BATCH_SIZE = 500;
-  const TRAIN_DATA_SIZE = 6000;
-  const TEST_DATA_SIZE = 1000;
+  const BATCH_SIZE = 512;
+  const TRAIN_DATA_SIZE = 20000;
+  const TEST_DATA_SIZE = 5000;
     
   // Get the training batches and resize them. Remember to put your code
   // inside a tf.tidy() clause to clean up all the intermediate tensors.
@@ -96,7 +109,7 @@ async function train(model, data) {
   return model.fit(trainXs, trainYs, {
     batchSize: BATCH_SIZE,
     validationData: [testXs, testYs],
-    epochs: 15,
+    epochs: 10,
     shuffle: true,
     callbacks: fitCallbacks
   });
@@ -160,7 +173,7 @@ async function run() {
   const model = getModel();
   tfvis.show.modelSummary({name: 'Model Architecture'}, model);
   await train(model, data);
-  await model.save('downloads://my_model');
+  //await model.save('downloads://my_model');
   init();
   alert("Training is done, try classifying your drawings!");
 }
