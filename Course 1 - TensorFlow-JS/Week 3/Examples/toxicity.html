@@ -1,11 +1,12 @@
 <html>
 <head>
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
+<!-- <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script> -->
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.1/dist/tf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/toxicity"></script>
 <script>
 const threshold = 0.9;
 toxicity.load(threshold).then(model => {
-    const sentences = ['you suck'];
+    const sentences = ['you are nice'];
     model.classify(sentences).then(predictions => {
         console.log(predictions);
         for(i=0; i<7; i++){
